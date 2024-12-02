@@ -1,33 +1,103 @@
+// login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:mascotassalud/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+
+    return Scaffold(
+      body: Center(
+        child: isSmallScreen
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  _Logo(),
+                  _FormContent(),
+                ],
+              )
+            : Container(
+                padding: const EdgeInsets.all(32.0),
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Row(
+                  children: const [
+                    Expanded(child: _Logo()),
+                    Expanded(
+                      child: Center(child: _FormContent()),
+                    ),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _Logo extends StatelessWidget {
+  const _Logo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Reemplaza FlutterLogo con el logo de tu aplicación
+        FlutterLogo(size: isSmallScreen ? 100 : 200),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            "Iniciar Sesión en MascotaSalud",
+            textAlign: TextAlign.center,
+            style: isSmallScreen
+                ? Theme.of(context).textTheme.headlineSmall
+                : Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(color: Colors.black),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _FormContent extends StatefulWidget {
+  const _FormContent({Key? key}) : super(key: key);
+
+  @override
+  State<_FormContent> createState() => __FormContentState();
+}
+
+class __FormContentState extends State<_FormContent> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isPasswordVisible = false;
+
   void _login() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.login(
-      _emailController.text,
-      _passwordController.text,
-    );
-
-    if (!mounted) return; // Asegura que el contexto aún esté montado
-
-    if (success) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error en inicio de sesión')),
+    if (_formKey.currentState?.validate() ?? false) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final success = await authProvider.login(
+        _emailController.text,
+        _passwordController.text,
       );
+
+      if (!mounted) return; // Asegura que el contexto aún esté montado
+
+      if (success) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error en inicio de sesión')),
+        );
+      }
     }
   }
 
@@ -35,33 +105,94 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Iniciar Sesión")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 300),
+      child: Form(
+        key: _formKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
+            // Campo de email con validación
+            TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Correo'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tu email';
+                }
+                bool emailValid = RegExp(
+                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                    .hasMatch(value);
+                if (!emailValid) {
+                  return 'Por favor ingresa un email válido';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                labelText: 'Correo',
+                hintText: 'Ingresa tu correo electrónico',
+                prefixIcon: Icon(Icons.email_outlined),
+                border: OutlineInputBorder(),
+              ),
             ),
-            const SizedBox(height: 16),
-            TextField(
+            _gap(),
+            // Campo de contraseña con opción de mostrar/ocultar
+            TextFormField(
               controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Contraseña'),
+              obscureText: !_isPasswordVisible,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tu contraseña';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                labelText: 'Contraseña',
+                hintText: 'Ingresa tu contraseña',
+                prefixIcon: const Icon(Icons.lock_outline),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(_isPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                ),
+              ),
             ),
-            const SizedBox(height: 16),
-            authProvider.isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: const Text("Ingresar"),
-                  ),
+            _gap(),
+            // Botón de inicio de sesión
+            SizedBox(
+              width: double.infinity,
+              child: authProvider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: _login,
+                      child: const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text(
+                          'Ingresar',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+            ),
+            _gap(),
+            // Opcional: Enlace para ir a la pantalla de registro
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/register');
+              },
+              child: const Text('¿No tienes cuenta? Regístrate aquí'),
+            ),
           ],
         ),
       ),
     );
   }
+
+  Widget _gap() => const SizedBox(height: 16);
 }

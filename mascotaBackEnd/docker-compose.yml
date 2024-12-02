@@ -3,19 +3,26 @@ version: '3.8'
 services:
   postgres:
     image: postgres:latest
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: pmaskadmin
+      POSTGRES_PASSWORD: t1s2r7*
+      POSTGRES_DB: mascotasalud_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
     networks:
       - app-network
 
   app:
     build: .
     ports:
-      - "3000:3000"
-    env_file:
-      - .env
+      - '3000:3000'
+    environment:
+      DB_HOST: postgres
+      DB_USER: pmaskadmin
+      DB_PASSWORD: t1s2r7*
+      DB_NAME: mascotasalud_db
     depends_on:
       - postgres
     networks:
@@ -26,4 +33,3 @@ volumes:
 
 networks:
   app-network:
-

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mascotassalud/screens/auth/register_screen.dart';
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
 import 'package:mascotassalud/providers/auth_provider.dart';
@@ -24,8 +25,9 @@ class MascotasApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
         '/home': (context) => HomeScreen(),
-        '/login': (context) => LoginScreen(),
       },
       home: Consumer<AuthProvider>(
         builder: (context, auth, _) {
