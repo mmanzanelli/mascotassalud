@@ -8,10 +8,24 @@ class LogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/images/logomascota.png',
-      width: size,
-      height: size,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          'assets/images/logomascota.png',
+          width: size,
+          height: size,
+        ),
+        const SizedBox(height: 16.0),
+        const Text(
+          'Bienvenido a Salud Animal',
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -23,6 +23,8 @@ class MascotasApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "Salud Animal",
+      theme: ThemeData(fontFamily: 'Poppins'),
       debugShowCheckedModeBanner: false,
       routes: {
         '/login': (context) => const LoginScreen(),

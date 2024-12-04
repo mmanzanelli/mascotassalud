@@ -172,13 +172,19 @@ class __FormContentState extends State<_FormContent> {
               child: authProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blue,
+                          padding: const EdgeInsets.symmetric(vertical: 14.0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0))),
                       onPressed: _login,
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Text(
                           'Ingresar',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

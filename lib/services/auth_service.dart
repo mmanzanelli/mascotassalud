@@ -1,6 +1,6 @@
-import 'dart:convert';
+import 'dart:convert' show jsonEncode;
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
-import 'package:mascotassalud/models/usuario_model.dart';
 
 class AuthService {
   static const String _baseUrl = 'http://192.168.11.176:3000';
