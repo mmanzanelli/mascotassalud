@@ -1,32 +1,35 @@
 // login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:mascotassalud/providers/auth_provider.dart';
+import 'package:mascotassalud/widgets/logo_widget.dart';
+// ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+    final double logoSize = isSmallScreen ? 200.0 : 400.0;
 
     return Scaffold(
       body: Center(
         child: isSmallScreen
             ? Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  _Logo(),
-                  _FormContent(),
+                children: [
+                  LogoWidget(size: logoSize),
+                  const _FormContent(),
                 ],
               )
             : Container(
                 padding: const EdgeInsets.all(32.0),
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: Row(
-                  children: const [
-                    Expanded(child: _Logo()),
-                    Expanded(
+                  children: [
+                    Expanded(child: LogoWidget(size: logoSize)),
+                    const Expanded(
                       child: Center(child: _FormContent()),
                     ),
                   ],

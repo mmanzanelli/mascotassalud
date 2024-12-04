@@ -1,5 +1,6 @@
 // register_screen.dart
 import 'package:flutter/material.dart';
+import 'package:mascotassalud/widgets/logo_widget.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -7,24 +8,25 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+    final double logoSize = isSmallScreen ? 200.0 : 400.0;
 
     return Scaffold(
       body: Center(
         child: isSmallScreen
-            ? const Column(
+            ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _Logo(),
-                  _FormContent(),
+                  LogoWidget(size: logoSize),
+                  const _FormContent(),
                 ],
               )
             : Container(
                 padding: const EdgeInsets.all(32.0),
                 constraints: const BoxConstraints(maxWidth: 800),
-                child: const Row(
+                child: Row(
                   children: [
-                    Expanded(child: _Logo()),
-                    Expanded(
+                    Expanded(child: LogoWidget(size: logoSize)),
+                    const Expanded(
                       child: Center(child: _FormContent()),
                     ),
                   ],
@@ -45,8 +47,12 @@ class _Logo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Reemplaza FlutterLogo con el logo de tu aplicación
-        FlutterLogo(size: isSmallScreen ? 100 : 200),
+        // Reemplaza FlutterLogo con tu imagen personalizada
+        Image.asset(
+          'assets/images/logomascota.png',
+          width: isSmallScreen ? 200 : 400,
+          height: isSmallScreen ? 200 : 400,
+        ),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
@@ -59,7 +65,7 @@ class _Logo extends StatelessWidget {
                     .headlineMedium
                     ?.copyWith(color: Colors.black),
           ),
-        )
+        ),
       ],
     );
   }
