@@ -3,7 +3,8 @@ import 'dart:convert' show jsonEncode;
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String _baseUrl = 'http://192.168.11.176:3000';
+  //static const String _baseUrl = 'http://192.168.11.176:3000';// movil
+  static const String _baseUrl = 'http://192.168.0.107:3000'; //casa
 
   static Future<bool> login(String email, String password) async {
     final response = await http.post(
