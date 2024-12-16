@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mascotassalud/screens/auth/register_screen.dart';
+import 'package:mascotassalud/providers/events_provider.dart';
+//import 'package:mascotassalud/screens/auth/register_screen.dart';
 import 'package:mascotassalud/screens/persistenBotton/PersistentBottomNavPage.dart';
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
-import 'package:mascotassalud/providers/auth_provider.dart';
-import 'package:mascotassalud/screens/auth/login_screen.dart';
-import 'package:mascotassalud/screens/home_screen.dart';
+//import 'package:mascotassalud/providers/auth_provider.dart';
+//import 'package:mascotassalud/screens/auth/login_screen.dart';
+//import 'package:mascotassalud/screens/HomeScreen/home_screen.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => EventsProvider()),
       ],
       child: const MascotasApp(),
     ),

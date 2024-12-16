@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mascotassalud/screens/HomeScreen/add_event_modal.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -49,7 +50,13 @@ class HomeScreen extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               onPressed: () {
-                // Navegar a agregar evento
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled:
+                      true, // Permite que el modal ocupe toda la pantalla si es necesario
+                  builder: (context) =>
+                      AddEventModal(), // Llama al modal para agregar eventos
+                );
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
