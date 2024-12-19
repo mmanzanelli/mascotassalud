@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mascotassalud/models/mascota_model.dart';
+import 'package:mascotassalud/providers/mascotas_provider.dart';
 import 'package:mascotassalud/screens/HomeScreen/add_event_modal.dart';
+import 'package:mascotassalud/screens/MascotaScreen/edit_mascota_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,18 +14,71 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Inicio'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.pets),
-            tooltip: 'Mis Mascotas',
-            onPressed: () {
-              // Navegar a la pantalla de "Mis Mascotas"
+          // Menú desplegable para mostrar las mascotas
+          Consumer<MascotasProvider>(
+            builder: (context, mascotasProvider, _) {
+              return PopupMenuButton<Mascota>(
+                icon: const Icon(Icons.pets),
+                tooltip: 'Mis Mascotas',
+                onSelected: (Mascota mascota) {
+                  Navigator.pushNamed(
+                    context,
+                    '/detalle_mascota',
+                    arguments: mascota,
+                  );
+                },
+                itemBuilder: (BuildContext context) {
+                  final mascotas = mascotasProvider.mascotas;
+
+                  if (mascotas.isEmpty) {
+                    return [
+                      const PopupMenuItem<Mascota>(
+                        enabled: false,
+                        child: Text('No tienes mascotas'),
+                      ),
+                    ];
+                  }
+
+                  return mascotas.map((mascota) {
+                    return PopupMenuItem<Mascota>(
+                      value: mascota,
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: mascota.foto != null
+                              ? NetworkImage(mascota.foto!)
+                              : null,
+                          child: mascota.foto == null
+                              ? const Icon(Icons.pets)
+                              : null,
+                        ),
+                        title: Text(mascota.nombre),
+                        subtitle: const Text('Tap para detalles'),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.edit),
+                          tooltip: 'Editar Mascota',
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditMascotaScreen(
+                                  mascota: mascota,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
+              );
             },
           ),
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Configuración',
             onPressed: () {
-              // Navegar a la pantalla de Configuración
+              Navigator.pushNamed(context, '/configuracion');
             },
           ),
         ],
@@ -52,10 +109,8 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
-                  isScrollControlled:
-                      true, // Permite que el modal ocupe toda la pantalla si es necesario
-                  builder: (context) =>
-                      AddEventModal(), // Llama al modal para agregar eventos
+                  isScrollControlled: true,
+                  builder: (context) => const AddEventModal(),
                 );
               },
               style: ElevatedButton.styleFrom(
